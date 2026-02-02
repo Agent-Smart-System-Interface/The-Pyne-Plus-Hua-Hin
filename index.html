@@ -6,51 +6,91 @@
     <title>The Pyne Plus Hua Hin - Luxury Catalog</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>body { font-family: 'Kanit', sans-serif; }</style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <header class="bg-white shadow-sm py-10 text-center border-b-4 border-blue-600">
-        <h1 class="text-3xl font-bold text-gray-800 uppercase tracking-widest">THE PYNE PLUS <span class="text-blue-600">HUA HIN</span></h1>
-        <p class="text-gray-400 text-sm mt-2 font-light">Exclusive Units Managed by Agent Smart System</p>
+<body class="bg-slate-50 min-h-screen font-['Kanit']">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50 py-10 border-b-8 border-amber-500">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold text-slate-800 uppercase tracking-tighter">THE PYNE PLUS <span class="text-amber-600 text-5xl">PROJECT B</span></h1>
+            <div class="flex justify-center items-center gap-4 mt-4">
+                <span class="bg-amber-50 text-amber-600 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm italic border border-amber-100">Luxury Collection Catalog</span>
+            </div>
+        </div>
     </header>
 
-    <main class="container mx-auto px-4 py-12">
-        <div id="loading" class="text-center py-20 text-gray-400 animate-pulse text-lg">กำลังเชื่อมต่อฐานข้อมูลโครงการ...</div>
-        <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <main class="container mx-auto px-4 py-16">
+        <div id="loading" class="text-center py-32 text-slate-400">
+            <i class="fa-solid fa-house-chimney-window animate-bounce text-5xl mb-6 block text-amber-200"></i>
+            <p class="animate-pulse font-bold italic">กำลังดึงข้อมูลบ้านในโครงการ The Pyne Plus Project B...</p>
+        </div>
+        
+        <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
     </main>
 
     <script>
-        // 🛑 สำคัญ: วาง URL Apps Script ของคุณที่นี่
+        // 🛑 สำคัญ: URL ของคุณที่ได้จากการ Deploy Apps Script ล่าสุด
         const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; 
+        const PROJECT_TARGET = "Project_B"; // ล็อกเป้าหมายที่โครงการ B (The Pyne Plus)
 
         async function init() {
+            const grid = document.getElementById('grid');
+            const loading = document.getElementById('loading');
+            
             try {
-                // ล็อกให้ดึงข้อมูลเฉพาะ Project_B (HP-B)
-                const res = await fetch(`${API_URL}?action=getPublicCatalog&project=Project_B`);
-                const json = await res.json();
-                if (json.status === "success") render(json.data);
-            } catch (e) { document.getElementById('loading').innerText = "⚠️ ไม่สามารถโหลดข้อมูลโครงการได้"; }
+                // เรียก API โดยระบุชื่อโปรเจกต์ที่ต้องการล็อก
+                const response = await fetch(`${API_URL}?action=getPublicCatalog&project=${PROJECT_TARGET}`); 
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    loading.style.display = 'none';
+                    render(result.data);
+                }
+            } catch (e) {
+                loading.innerHTML = `
+                    <div class='bg-red-50 text-red-500 p-10 rounded-[2rem] border border-red-100 shadow-sm'>
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-4"></i>
+                        <p class="font-bold uppercase tracking-widest">ไม่สามารถเข้าถึงฐานข้อมูล Project B ได้</p>
+                        <p class="text-xs mt-2 italic font-medium">โปรดตรวจสอบ API URL ในโค้ด</p>
+                    </div>`;
+            }
         }
 
         function render(items) {
             const grid = document.getElementById('grid');
-            document.getElementById('loading').style.display = 'none';
-            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center text-gray-400 py-20'>ยังไม่มีบ้านที่ออนไลน์ในโครงการนี้</p>"; return; }
-            grid.innerHTML = items.map(i => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl transition-all group">
-                    <div class="relative overflow-hidden">
-                        <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/600x400?text=The+Pyne+Plus'}" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">${i.HP_ID}</div>
+            
+            // กรองข้อมูลให้มั่นใจอีกชั้นว่าต้องเป็น Project B เท่านั้น (HP-B)
+            const filteredItems = items.filter(i => i.HP_ID && i.HP_ID.startsWith('HP-B'));
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = "<p class='col-span-full text-center py-32 text-slate-400 font-bold italic text-2xl uppercase tracking-widest'>ยังไม่มีรายการบ้านที่พร้อมโชว์ในโครงการ B</p>";
+                return;
+            }
+            
+            grid.innerHTML = filteredItems.map(i => `
+                <div class="bg-white rounded-[3rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-700 group">
+                    <div class="relative overflow-hidden aspect-[4/3]">
+                        <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/800x600?text=Project+B+Property'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+                        <div class="absolute top-8 left-8 bg-amber-600 text-white px-6 py-2 rounded-full text-[10px] font-bold shadow-2xl uppercase tracking-widest italic border border-white/20 backdrop-blur-sm">${i.HP_ID}</div>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2 truncate">${i.ID_NAME}</h3>
-                        <p class="text-blue-600 font-bold mb-4 italic text-sm">${i.District} - ${i.SubDistrict}</p>
-                        <p class="text-3xl font-bold text-gray-900 mb-6">฿${Number(i.Price || 0).toLocaleString()}</p>
-                        <button class="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-blue-700 transition-colors">ดูรายละเอียดเชิงลึก</button>
+                    <div class="p-10">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest italic border-l-4 border-amber-500 pl-3">The Pyne Plus</span>
+                            <span class="text-[9px] font-bold text-green-500 uppercase bg-green-50 px-4 py-1 rounded-full shadow-inner italic">${i.System_Status || 'Live'}</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2 truncate group-hover:text-amber-600 transition-colors italic">${i.ID_NAME}</h3>
+                        <div class="flex gap-4 mb-8 text-slate-400 text-[10px] uppercase font-bold tracking-widest italic">
+                            <span><i class="fa-solid fa-bed mr-1 text-amber-300"></i> ${i.Bedrooms || 0} Bed</span>
+                            <span><i class="fa-solid fa-bath mr-1 text-amber-300"></i> ${i.Bathrooms || 0} Bath</span>
+                        </div>
+                        <p class="text-4xl font-bold text-slate-900 mb-10 tracking-tighter border-b border-slate-50 pb-8">฿${Number(i.Price || 0).toLocaleString()}</p>
+                        <button class="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-bold text-xs uppercase tracking-[0.3em] hover:bg-amber-600 transition-all shadow-xl active:scale-95 italic">ดูรายละเอียดเชิงลึก</button>
                     </div>
                 </div>
             `).join('');
         }
+
         init();
     </script>
 </body>
