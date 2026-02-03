@@ -9,10 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Kanit', sans-serif; background: #fafaf9; color: #44403c; }
-        .dense-row td { padding: 0.4rem 0.6rem !important; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
-        .dense-row th { padding: 0.6rem !important; font-size: 10px !important; text-transform: uppercase; }
-        .status-badge { font-size: 8px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; }
-        .truncate-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        /* จัดสมดุลคอลัมน์ ID ไม่ให้ซ้อนแถว */
+        .dense-row td { padding: 0.5rem 0.4rem !important; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
+        .dense-row th { padding: 0.6rem 0.4rem !important; font-size: 10px !important; text-transform: uppercase; white-space: nowrap; }
+        .no-wrap-id { white-space: nowrap; font-size: 11px; letter-spacing: -0.02em; }
+        .status-badge { font-size: 8px; padding: 2px 6px; border-radius: 99px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+        .truncate-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 11px; }
     </style>
 </head>
 <body class="p-2 md:p-6 italic">
@@ -20,12 +22,12 @@
     <div class="max-w-4xl mx-auto">
         <div class="flex flex-col md:flex-row gap-2 mb-4">
             <div class="flex-1 flex gap-2">
-                <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-amber-100 flex items-center min-w-fit">
-                    <span class="text-amber-700 font-bold text-[11px] uppercase tracking-tighter">👑 THE PYNE PLUS</span>
+                <div class="bg-white px-3 py-3 rounded-xl shadow-sm border border-amber-100 flex items-center min-w-fit">
+                    <span class="text-amber-700 font-bold text-[10px] uppercase tracking-tighter">👑 THE PYNE PLUS</span>
                 </div>
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-amber-300 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหารหัส/ชื่อใน The Pyne..." class="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-amber-100 text-[11px] font-bold">
+                    <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหารหัส/ชื่อ..." class="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-amber-100 text-[11px] font-bold">
                 </div>
             </div>
         </div>
@@ -33,10 +35,10 @@
         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-50">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse dense-row">
-                    <thead class="bg-[#78350f] text-white">
-                        <tr class="italic uppercase text-[9px] tracking-widest">
-                            <th class="w-[20%]">ID</th>
-                            <th class="w-[45%]">Property Name</th>
+                    <thead class="bg-amber-900 text-white italic">
+                        <tr class="uppercase text-[9px] tracking-widest">
+                            <th class="w-[28%] pl-4">ID</th> 
+                            <th class="w-[37%]">Property Name</th>
                             <th class="w-[20%] text-center">Status</th>
                             <th class="w-[15%] text-center">Manage</th>
                         </tr>
@@ -73,7 +75,7 @@
 
         async function init() {
             const tbody = document.getElementById('unitTableBody');
-            tbody.innerHTML = "<tr><td colspan='4' class='p-10 text-center animate-pulse text-amber-600 text-xs italic font-bold'>👑 SYNCING THE PYNE...</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='4' class='p-10 text-center animate-pulse text-amber-600 text-[10px] font-bold'>🔄 SYNCING THE PYNE...</td></tr>";
             try {
                 const res = await fetch(`${API_URL}?mode=getUnitList&project=${PROJECT_ID}`);
                 masterData = await res.json();
@@ -84,7 +86,7 @@
         function renderTable(data) {
             document.getElementById('unitTableBody').innerHTML = data.map(u => `
                 <tr class="hover:bg-amber-50/50 transition-colors">
-                    <td class="font-bold text-stone-900">${u.id}</td>
+                    <td class="font-bold text-stone-900 no-wrap-id pl-4">${u.id}</td>
                     <td class="font-bold text-stone-500 truncate-text">${u.name || '-'}</td>
                     <td class="text-center"><span class="${getStatusStyle(u.status)} status-badge">${u.status || 'PND'}</span></td>
                     <td class="text-center text-amber-600"><button onclick="openEdit('${u.id}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
