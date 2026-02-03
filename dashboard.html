@@ -3,89 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>COCO ADMIN DASHBOARD</title>
+    <title>THE PYNE - UNIT DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Kanit', sans-serif; background: #f8fafc; }
-        .dense-row td { padding: 0.5rem 0.4rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        body { font-family: 'Kanit', sans-serif; background: #fafaf9; }
+        .dense-row td { padding: 0.5rem 0.4rem !important; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
         .dense-row th { padding: 0.6rem 0.4rem !important; font-size: 10px !important; text-transform: uppercase; }
-        .no-wrap-id { white-space: nowrap; font-size: 11px; font-weight: 700; color: #1e3a8a; }
+        .no-wrap-id { white-space: nowrap; font-size: 11px; font-weight: 700; color: #78350f; }
         .status-badge { font-size: 9px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; }
     </style>
 </head>
 <body class="p-2 md:p-6 italic">
     <div class="max-w-4xl mx-auto">
         <div class="flex gap-2 mb-4">
-            <div class="bg-white px-3 py-3 rounded-xl shadow-sm border border-blue-100 min-w-fit flex items-center">
-                <span class="text-blue-700 font-bold text-[10px]">📍 COCO HUA HIN</span>
+            <div class="bg-white px-3 py-3 rounded-xl shadow-sm border border-amber-100 min-w-fit flex items-center">
+                <span class="text-amber-700 font-bold text-[10px]">👑 THE PYNE PLUS</span>
             </div>
-            <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหารหัส HP หรือ แปลง..." class="w-full px-4 py-3 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
+            <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหารหัส HP หรือ แปลง..." class="w-full px-4 py-3 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-amber-100 text-[11px] font-bold">
         </div>
-
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
-            <table class="w-full text-left border-collapse dense-row">
-                <thead class="bg-slate-900 text-white italic">
-                    <tr class="uppercase text-[9px] tracking-widest">
-                        <th class="w-[28%] pl-4">HP-ID</th><th class="w-[37%]">Plot Name</th>
-                        <th class="text-center w-[20%]">Status</th><th class="text-center w-[15%]">Manage</th>
-                    </tr>
-                </thead>
-                <tbody id="unitTableBody" class="text-[11px]"></tbody>
-            </table>
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-50">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse dense-row">
+                    <thead class="bg-amber-900 text-white italic">
+                        <tr class="uppercase text-[9px] tracking-widest">
+                            <th class="w-[28%] pl-4">HP-ID</th><th class="w-[37%]">Plot Name</th>
+                            <th class="w-[20%] text-center">Status</th><th class="w-[15%] text-center">Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unitTableBody" class="text-[11px] font-medium"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-blue-600 animate-in fade-in zoom-in duration-200">
-            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic">🛠️ Update CoCo: <span id="editingId" class="text-blue-600"></span></h2>
+    <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-amber-600 animate-in fade-in zoom-in duration-200">
+            <h2 class="text-sm font-bold text-stone-800 mb-6 uppercase italic">🛠️ Update Pyne: <span id="editingId" class="text-amber-600"></span></h2>
             <div class="space-y-4">
-                <div><label class="text-[9px] font-bold text-slate-400 ml-2">แปลง (Plot)</label><input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px]"></div>
-                <div><label class="text-[9px] font-bold text-slate-400 ml-2">ที่อยู่ (Address)</label><input type="text" id="addressInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none text-[11px]"></div>
+                <div><label class="text-[9px] font-bold text-stone-400 uppercase ml-2 italic">แปลง (PLOT)</label>
+                    <input type="text" id="plotInput" class="w-full p-4 bg-stone-50 rounded-xl outline-none font-bold text-[11px]"></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <input type="number" id="priceInput" class="p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none text-sm">
-                    <select id="statusSelect" class="p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none">
-                        <option value="Online">🟢 Online</option>
-                        <option value="Pending">🟡 Pending</option>
-                        <option value="Off">🔴 Off</option>
+                    <input type="number" id="priceInput" placeholder="ราคา" class="p-4 bg-amber-50 text-amber-700 font-bold rounded-xl outline-none text-sm w-full">
+                    <select id="statusSelect" class="p-4 bg-white border border-stone-100 rounded-xl font-bold text-[10px] outline-none">
+                        <option value="Available">Available</option><option value="Under Construction">Under Con</option><option value="Sold">Sold</option><option value="Reserved">Reserved</option>
                     </select>
                 </div>
-                <button onclick="saveData()" id="btnSave" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-blue-600 transition-all mt-4">บันทึกข้อมูล CoCo</button>
+                <button onclick="saveData()" id="btnSave" class="w-full bg-stone-900 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-amber-600 transition-all mt-4">บันทึกข้อมูล Pyne</button>
             </div>
         </div>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec";
-        const PROJECT_ID = "Project_A";
+        const PROJECT_ID = "Project_B";
         let cachedData = [];
-
         async function init() {
             const res = await fetch(`${API_URL}?mode=getUnitList&project=${PROJECT_ID}`);
             cachedData = await res.json(); renderTable(cachedData);
         }
         function renderTable(d) {
             document.getElementById('unitTableBody').innerHTML = d.map(u => `
-                <tr class="hover:bg-blue-50/50 transition-colors">
+                <tr class="hover:bg-amber-50/50 transition-colors">
                     <td class="no-wrap-id pl-4">${u.id}</td><td>${u.name || '-'}</td>
-                    <td class="text-center"><span class="${getStatusStyle(u.status)} status-badge">${u.status || 'PND'}</span></td>
-                    <td class="text-center"><button onclick="openEdit('${u.id}')" class="text-blue-500 p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    <td class="text-center"><span class="bg-amber-50 text-amber-600 status-badge">${u.status || 'Available'}</span></td>
+                    <td class="text-center text-amber-600"><button onclick="openEdit('${u.id}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
                 </tr>`).join('');
-        }
-        function getStatusStyle(s) {
-            if (s==='Online') return 'bg-green-100 text-green-600';
-            if (s==='Off') return 'bg-red-100 text-red-600';
-            return 'bg-yellow-100 text-yellow-600';
         }
         async function openEdit(id) {
             document.getElementById('editingId').innerText = id; document.getElementById('editModal').style.display = 'flex';
             const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${PROJECT_ID}&hpId=${id}`);
-            const data = await res.json();
-            document.getElementById('plotInput').value = data.ID_NAME || "";
-            document.getElementById('addressInput').value = data.Plot || "";
-            document.getElementById('priceInput').value = data.Price || 0;
-            document.getElementById('statusSelect').value = data.System_Status || "Pending";
+            const d = await res.json();
+            document.getElementById('plotInput').value = d.ID_NAME || "";
+            document.getElementById('priceInput').value = d.Price || 0;
+            document.getElementById('statusSelect').value = d.Status || "Available";
         }
         function localSearch() {
             const t = document.getElementById('searchInput').value.toUpperCase();
@@ -94,7 +86,7 @@
         function closeEdit() { document.getElementById('editModal').style.display = 'none'; }
         async function saveData() {
             const btn = document.getElementById('btnSave'); btn.disabled = true;
-            const payload = { project: PROJECT_ID, hpId: document.getElementById('editingId').innerText, idName: document.getElementById('plotInput').value, plot: document.getElementById('addressInput').value, price: document.getElementById('priceInput').value, sysStatus: document.getElementById('statusSelect').value, files: [] };
+            const payload = { project: PROJECT_ID, hpId: document.getElementById('editingId').innerText, idName: document.getElementById('plotInput').value, price: document.getElementById('priceInput').value, status: document.getElementById('statusSelect').value, files: [] };
             try { await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); closeEdit(); init(); } catch (e) { btn.disabled = false; }
         }
         window.onload = init;
